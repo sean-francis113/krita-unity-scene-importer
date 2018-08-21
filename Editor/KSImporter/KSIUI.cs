@@ -10,6 +10,7 @@ public class KSIUI : EditorWindow {
     {
 
         Debug.Log("Showing Updated Window!");
+        
 
     }
 
@@ -17,7 +18,29 @@ public class KSIUI : EditorWindow {
     public static void ShowImportWindow()
     {
 
-        GetWindow<KSIUI>(true, "Krita Scene Importer", true);
+        KSIUI window = GetWindow<KSIUI>(true, "Krita Scene Importer", true);
+        window.minSize = new Vector2(600, 475);
+
+    }
+
+    private void OnFocus()
+    {
+        
+
+
+    }
+
+    private void OnLostFocus()
+    {
+        
+
+
+    }
+
+    private void OnDestroy()
+    {
+        
+
 
     }
 
@@ -50,6 +73,15 @@ public class KSIUI : EditorWindow {
         }
         EditorGUILayout.EndHorizontal();
 
+        GUILayout.Label("Create New Keyword Handler", EditorStyles.boldLabel);
+        KSITemplateCreator.handlerName = EditorGUILayout.TextField("New Handler Name:", KSITemplateCreator.handlerName);
+        if(GUILayout.Button("Create Handler"))
+        {
+
+            KSITemplateCreator.AddHandler();
+
+        }
+
         GUILayout.Label("Settings For Scene Saving", EditorStyles.boldLabel);
         KSIData.sceneFilePath = EditorGUILayout.TextField("Scene File Path:", KSIData.sceneFilePath);
         KSIData.imageFilePath = EditorGUILayout.TextField("Image File Path:", KSIData.imageFilePath);
@@ -66,6 +98,21 @@ public class KSIUI : EditorWindow {
             KSImporter.StartImport();
 
         }
+
+    }
+
+    void SaveKSIData()
+    {
+
+        EditorPrefs.SetInt("WordCount", KSIData.keywordList.Count);
+
+
+    }
+
+    void LoadKSIData()
+    {
+
+
 
     }
 
