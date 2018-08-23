@@ -5,7 +5,7 @@ using UnityEngine;
 public class KeywordHandler{
 
     public string keyword;
-    public ImportType type;
+    public ImportHandler handler;
 
     /// <summary>
     /// Initialize a KeywordHandler Object
@@ -14,7 +14,7 @@ public class KeywordHandler{
     {
 
         keyword = "";
-        type = ImportType.NONE;
+        handler = ImportHandler.NONE;
 
     }
 
@@ -23,11 +23,11 @@ public class KeywordHandler{
     /// </summary>
     /// <param name="word">The Keyword</param>
     /// <param name="t">The Handler Type</param>
-    public KeywordHandler(string word, ImportType t)
+    public KeywordHandler(string word, ImportHandler t)
     {
 
         keyword = word;
-        type = t;
+        handler = t;
 
     }
 
@@ -150,29 +150,29 @@ public class KeywordHandler{
 
     }
 
-    string TypeToStr(ImportType type)
+    public static string TypeToStr(ImportHandler type)
     {
 
         return type.ToString();
 
     }
 
-    ImportType StrToType(string str)
+    public static ImportHandler StrToType(string str)
     {
 
         switch (str.ToUpper())
         {
 
             case "NONE":
-                return ImportType.NONE;
+                return ImportHandler.NONE;
             case "PLATFORM":
-                return ImportType.PLATFORM;
+                return ImportHandler.PLATFORM;
             case "GROUND":
-                return ImportType.GROUND;
+                return ImportHandler.GROUND;
             case "SCENERY":
-                return ImportType.SCENERY;
+                return ImportHandler.SCENERY;
             default:
-                return ImportType.NONE;
+                return ImportHandler.NONE;
 
         }
 
@@ -183,12 +183,25 @@ public class KeywordHandler{
 /// <summary>
 /// Enumerator Holding All Keyword Handler Types 
 /// </summary>
-public enum ImportType
+public enum ImportHandler
 {
 
+    /// <summary>
+    /// Only Save the Image. Do Not Add to Scene or Add Components to Image
+    /// </summary>
     NONE,
+    /// <summary>
+    /// Add to Scene, Add a Collider(Box), Add a Platform Effector, Add Platform Layer to Image (If Platform Layer Exists) 
+    /// </summary>
     PLATFORM,
+    /// <summary>
+    /// Add to Scene, Add a Collider(Box), Add Ground Layer to Image (If Ground Layer Exists)
+    /// </summary>
     GROUND,
+    /// <summary>
+    /// Add to Scene, Add Scenery Layer to Image (If Scenery Layer Exists)
+    /// </summary>
     SCENERY
+    //<Template Creator Will Add User Created Handlers Below Here>
 
 };
