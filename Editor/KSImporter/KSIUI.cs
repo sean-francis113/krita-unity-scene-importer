@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -9,8 +9,7 @@ public class KSIUI : EditorWindow {
     private void OnEnable()
     {
 
-        Debug.Log("Showing Updated Window!");
-        
+        Debug.Log("Showing Updated Window!");        
 
     }
 
@@ -124,7 +123,7 @@ public class KSIUI : EditorWindow {
 
             EditorGUILayout.BeginHorizontal();
             KSIData.keywordList[i].keyword = EditorGUILayout.TextField("Keyword " + (i + 1), KSIData.keywordList[i].keyword);
-            KSIData.keywordList[i].type = (ImportType)EditorGUILayout.EnumPopup("Keyword Handler:", KSIData.keywordList[i].type);
+            KSIData.keywordList[i].type = (ImportHandler)EditorGUILayout.EnumPopup("Keyword Handler:", KSIData.keywordList[i].type);
             EditorGUILayout.EndHorizontal();
 
         }

@@ -30,9 +30,9 @@ public static class KSIData {
     public static List<KeywordHandler> keywordList = new List<KeywordHandler>
     {
 
-        new KeywordHandler("platform", ImportType.PLATFORM),
-        new KeywordHandler("ground", ImportType.GROUND),
-        new KeywordHandler("backgroundscenery", ImportType.SCENERY)
+        new KeywordHandler("platform", ImportHandler.PLATFORM),
+        new KeywordHandler("ground", ImportHandler.GROUND),
+        new KeywordHandler("backgroundscenery", ImportHandler.SCENERY)
 
     };
 
