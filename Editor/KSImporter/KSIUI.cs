@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -9,8 +9,7 @@ public class KSIUI : EditorWindow {
     private void OnEnable()
     {
 
-        Debug.Log("Showing Updated Window!");
-        
+        Debug.Log("Showing Updated Window!");        
 
     }
 
@@ -25,22 +24,25 @@ public class KSIUI : EditorWindow {
 
     private void OnFocus()
     {
-        
 
+        Debug.Log("Window Focused. Loading Data.");
+        LoadKSIData();
 
     }
 
     private void OnLostFocus()
     {
-        
 
+        Debug.Log("Window Lost Focused. Saving Data.");
+        SaveKSIData();
 
     }
 
     private void OnDestroy()
     {
-        
 
+        Debug.Log("Window Destroyed. Saving Data.");
+        SaveKSIData();
 
     }
 
@@ -92,7 +94,7 @@ public class KSIUI : EditorWindow {
         EditorGUILayout.EndToggleGroup();
 
 
-        if (GUILayout.Button("Export Scene"))
+        if (GUILayout.Button("Import Scene"))
         {
 
             KSImporter.StartImport();
@@ -101,18 +103,85 @@ public class KSIUI : EditorWindow {
 
     }
 
+    /// <summary>
+    /// Saves All of the Data Set in the UI
+    /// </summary>
     void SaveKSIData()
     {
 
-        EditorPrefs.SetInt("WordCount", KSIData.keywordList.Count);
+        //Save Data Up To Keyword Handlers
+        EditorPrefs.SetString("BasePath", KSIData.baseFilePath);
+        EditorPrefs.SetBool("UseFolders", KSIData.useFolders);
+        EditorPrefs.SetString("ExportFolder", KSIData.exportFolder);
+        EditorPrefs.SetString("XMLFolder", KSIData.xmlFolder);
 
+        int i = 0;
+
+        //Clear Previous Keyword Handler Keys
+        while(EditorPrefs.GetString("Key" + i) != "")
+        {
+
+            EditorPrefs.DeleteKey("Key" + i);
+            EditorPrefs.DeleteKey("Handler" + i);
+            i++;
+
+        }
+        
+        //Save Keyword Handler Keys
+        for(i = 0; i < KSIData.keywordList.Count; i++)
+        {
+
+            EditorPrefs.SetString("Key" + i, KSIData.keywordList[i].keyword);
+            EditorPrefs.SetString("Handler" + i, KeywordHandler.TypeToStr(KSIData.keywordList[i].handler));
+
+        }
+
+        //Save Data After Keyword Handlers
+        EditorPrefs.SetInt("Index", KSIData.indexToChange);
+        EditorPrefs.SetString("NewHandler", KSITemplateCreator.handlerName);
+        EditorPrefs.SetString("ScenePath", KSIData.sceneFilePath);
+        EditorPrefs.SetString("ImagePath", KSIData.imageFilePath);
 
     }
 
+    /// <summary>
+    /// Loads All of the Data Saved From the UI
+    /// </summary>
     void LoadKSIData()
     {
 
+        KSIData.baseFilePath = EditorPrefs.GetString("BasePath");
+        KSIData.useFolders = EditorPrefs.GetBool("UseFolders");
+        KSIData.exportFolder = EditorPrefs.GetString("ExportFolder");
+        KSIData.xmlFolder = EditorPrefs.GetString("XMLFolder");
 
+        for(int i = 0; i < KSIData.keywordList.Count; i++)
+        {
+
+            if (KSIData.keywordList[i] == null)
+            {
+
+                KSIData.keywordList.Add(
+                    new KeywordHandler(
+                        EditorPrefs.GetString("Key" + i),
+                        KeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i))));
+
+            }
+            else
+            {
+                KSIData.keywordList[i].keyword = EditorPrefs.GetString("Key" + i);
+                KSIData.keywordList[i].handler = KeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i));
+
+            }
+
+        }
+
+        KSIData.keywordList.TrimExcess();
+
+        KSIData.indexToChange = EditorPrefs.GetInt("Index");
+        KSITemplateCreator.handlerName = EditorPrefs.GetString("NewHandler");
+        KSIData.sceneFilePath = EditorPrefs.GetString("ScenePath");
+        KSIData.imageFilePath = EditorPrefs.GetString("ImagePath");
 
     }
 
@@ -124,7 +193,7 @@ public class KSIUI : EditorWindow {
 
             EditorGUILayout.BeginHorizontal();
             KSIData.keywordList[i].keyword = EditorGUILayout.TextField("Keyword " + (i + 1), KSIData.keywordList[i].keyword);
-            KSIData.keywordList[i].type = (ImportType)EditorGUILayout.EnumPopup("Keyword Handler:", KSIData.keywordList[i].type);
+            KSIData.keywordList[i].handler = (ImportHandler)EditorGUILayout.EnumPopup("Keyword Handler:", KSIData.keywordList[i].handler);
             EditorGUILayout.EndHorizontal();
 
         }
