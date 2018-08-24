@@ -5,7 +5,7 @@ using UnityEngine;
 public class KeywordHandler{
 
     public string keyword;
-    public ImportHandler type;
+    public ImportHandler handler;
 
     /// <summary>
     /// Initialize a KeywordHandler Object
@@ -14,7 +14,7 @@ public class KeywordHandler{
     {
 
         keyword = "";
-        type = ImportHandler.NONE;
+        handler = ImportHandler.NONE;
 
     }
 
@@ -27,7 +27,7 @@ public class KeywordHandler{
     {
 
         keyword = word;
-        type = t;
+        handler = t;
 
     }
 
@@ -150,14 +150,14 @@ public class KeywordHandler{
 
     }
 
-    string TypeToStr(ImportHandler type)
+    public static string TypeToStr(ImportHandler type)
     {
 
         return type.ToString();
 
     }
 
-    ImportHandler StrToType(string str)
+    public static ImportHandler StrToType(string str)
     {
 
         switch (str.ToUpper())
