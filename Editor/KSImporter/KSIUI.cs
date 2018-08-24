@@ -94,7 +94,7 @@ public class KSIUI : EditorWindow {
         EditorGUILayout.EndToggleGroup();
 
 
-        if (GUILayout.Button("Export Scene"))
+        if (GUILayout.Button("Import Scene"))
         {
 
             KSImporter.StartImport();

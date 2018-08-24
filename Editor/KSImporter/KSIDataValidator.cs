@@ -95,8 +95,8 @@ public static class KSIDataValidator{
         }
 
         //If the File Path Specified Does Not End With a Slash
-        if (KSIData.baseFilePath[KSIData.baseFilePath.Length - 1] != '/' ||
-            KSIData.baseFilePath[KSIData.baseFilePath.Length - 1] != '\\')
+        if (!KSIData.baseFilePath.EndsWith("/") &&
+            !KSIData.baseFilePath.EndsWith("\\"))
         {
 
             string temp = KSIData.baseFilePath + "/";
@@ -140,8 +140,8 @@ public static class KSIDataValidator{
         }
 
         //If The Slashes Were Not Typed Out
-        if (KSIData.useFolders && (KSIData.xmlFolder[KSIData.xmlFolder.Length - 1] != '/' ||
-           KSIData.xmlFolder[KSIData.xmlFolder.Length - 1] != '\\'))
+        if (!KSIData.xmlFolder.EndsWith("/") &&
+           !KSIData.xmlFolder.EndsWith("\\"))
         {
 
             string temp = KSIData.xmlFolder + "/";
@@ -174,8 +174,8 @@ public static class KSIDataValidator{
         }
 
         //If The Slashes Were Not Typed Out
-        if (KSIData.useFolders && (KSIData.exportFolder[KSIData.exportFolder.Length - 1] != '/' ||
-           KSIData.exportFolder[KSIData.exportFolder.Length - 1] != '\\'))
+        if (!KSIData.exportFolder.EndsWith("/") &&
+           !KSIData.exportFolder.EndsWith("\\"))
         {
 
             string temp = KSIData.exportFolder + "/";
@@ -263,6 +263,8 @@ public static class KSIDataValidator{
     private static bool CheckSceneFilePath()
     {
 
+        Debug.Log("Scene File Path Before Check: " + KSIData.sceneFilePath);
+
         //If the Scene File Path to Import To is Empty
         if (KSIData.sceneFilePath == "")
         {
@@ -288,8 +290,13 @@ public static class KSIDataValidator{
         else
         {
 
-            string temp = Application.dataPath + KSIData.sceneFilePath;
-            KSIData.sceneFilePath = temp;
+            if(!KSIData.sceneFilePath.StartsWith(Application.dataPath))
+            {
+
+                string temp = Application.dataPath + "/" + KSIData.sceneFilePath;
+                KSIData.sceneFilePath = temp;
+
+            }
 
         }
 
@@ -303,6 +310,8 @@ public static class KSIDataValidator{
     /// <returns>True if Valid; False Otherwise</returns>
     private static bool CheckImageFilePath()
     {
+
+        Debug.Log("Image File Path Before Check: " + KSIData.imageFilePath);
 
         //If the Scene File Path to Import To is Empty
         if (KSIData.imageFilePath == "")
@@ -329,8 +338,13 @@ public static class KSIDataValidator{
         else
         {
 
-            string temp = Application.dataPath + KSIData.imageFilePath;
-            KSIData.imageFilePath = temp;
+            if (!KSIData.imageFilePath.StartsWith(Application.dataPath))
+            {
+
+                string temp = Application.dataPath + "/" + KSIData.imageFilePath;
+                KSIData.imageFilePath = temp;
+
+            }
 
         }
 
