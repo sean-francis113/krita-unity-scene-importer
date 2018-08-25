@@ -8,7 +8,7 @@ public static class KSIData {
     /// Which Line Does the Unity Scene Name Appear in the XML File?
     /// Used Internally To Grab the Unity Scene Name
     /// </summary>
-    public const int UNITY_SCENE_DECLARATION_LINE = 2;
+    public const int UNITY_SCENE_DECLARATION_LINE = 3;
 
     /// <summary>
     /// The Name of the Scene Exported Out

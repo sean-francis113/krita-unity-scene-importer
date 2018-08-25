@@ -315,7 +315,10 @@ public class KSIUI : EditorWindow {
     /// <param name="filePath">The File Path of the XML File</param>
     /// <returns></returns>
     public static string GetSceneName(string filePath)
-    {        
+    {
+
+        //The Characters We Are Going to Split the Name Line By
+        char[] splitChars = { ' ', '\n', '\t', '<', '>' };
 
         //Grab All of the Lines from the XML File
         string[] lines = System.IO.File.ReadAllLines(filePath);
@@ -324,24 +327,14 @@ public class KSIUI : EditorWindow {
         string sceneLine = lines[KSIData.UNITY_SCENE_DECLARATION_LINE - 1];
 
         //Split the Scene Line Further To Grab Just the Name
-        string[] slArray = sceneLine.Split(' ');
+        string[] slArray = sceneLine.Split(splitChars);
 
         string sceneName = "";
 
-        //This Block Assumes That User Used Krita Scene Exporter
-        //If Not, They Are Free to Make A Block For Their Exporter
-        {
-
-            //The Name Should Always Be Set in the First Index
-            sceneName = slArray[0];
-
-            //Remove the Sign Before the Name if There is One
-            string[] temp = sceneName.Split('<');
-
-            //Roundabout Way to Remove Sign, but Only One That Seemed to Work
-            sceneName = temp[1];
-
-        }
+        //The Name Should Always Be Set in the Third Index
+        //The First Index is the Tab
+        //The Second is the < Sign
+        sceneName = slArray[2];
 
         //Return Calculated Scene Name
         return sceneName;        
