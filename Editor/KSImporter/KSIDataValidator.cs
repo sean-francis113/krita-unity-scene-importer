@@ -293,7 +293,7 @@ public static class KSIDataValidator{
             if(!KSIData.sceneFilePath.StartsWith(Application.dataPath))
             {
 
-                string temp = Application.dataPath + "/" + KSIData.sceneFilePath;
+                string temp = Application.dataPath + "/" + KSIData.sceneFilePath + "/";
                 KSIData.sceneFilePath = temp;
 
             }
@@ -341,7 +341,7 @@ public static class KSIDataValidator{
             if (!KSIData.imageFilePath.StartsWith(Application.dataPath))
             {
 
-                string temp = Application.dataPath + "/" + KSIData.imageFilePath;
+                string temp = Application.dataPath + "/" + KSIData.imageFilePath + "/";
                 KSIData.imageFilePath = temp;
 
             }
