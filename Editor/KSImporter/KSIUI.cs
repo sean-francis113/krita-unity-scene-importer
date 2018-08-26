@@ -106,14 +106,14 @@ public class KSIUI : EditorWindow {
         if (GUILayout.Button("Add Keyword At 'Index to Change'"))
         {
 
-            KeywordHandler.AddKeyword(KSIData.indexToChange);
+            KSIKeywordHandler.AddKeyword(KSIData.indexToChange);
 
         }
 
         if (GUILayout.Button("Remove Keyword At 'Index to Change'"))
         {
 
-            KeywordHandler.RemoveKeyword(KSIData.indexToChange);
+            KSIKeywordHandler.RemoveKeyword(KSIData.indexToChange);
 
         }
         EditorGUILayout.EndHorizontal();
@@ -189,7 +189,7 @@ public class KSIUI : EditorWindow {
         {
 
             EditorPrefs.SetString("Key" + i, KSIData.keywordList[i].keyword);
-            EditorPrefs.SetString("Handler" + i, KeywordHandler.TypeToStr(KSIData.keywordList[i].handler));
+            EditorPrefs.SetString("Handler" + i, KSIKeywordHandler.TypeToStr(KSIData.keywordList[i].handler));
 
         }
 
@@ -225,15 +225,15 @@ public class KSIUI : EditorWindow {
             {
 
                 KSIData.keywordList.Add(
-                    new KeywordHandler(
+                    new KSIKeywordHandler(
                         EditorPrefs.GetString("Key" + i),
-                        KeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i))));
+                        KSIKeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i))));
 
             }
             else
             {
                 KSIData.keywordList[i].keyword = EditorPrefs.GetString("Key" + i);
-                KSIData.keywordList[i].handler = KeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i));
+                KSIData.keywordList[i].handler = KSIKeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i));
 
             }
 

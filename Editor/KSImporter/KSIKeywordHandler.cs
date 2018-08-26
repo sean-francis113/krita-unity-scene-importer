@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeywordHandler{
+public class KSIKeywordHandler{
 
     public string keyword;
     public ImportHandler handler;
@@ -10,7 +10,7 @@ public class KeywordHandler{
     /// <summary>
     /// Initialize a KeywordHandler Object
     /// </summary>
-    public KeywordHandler()
+    public KSIKeywordHandler()
     {
 
         keyword = "";
@@ -23,7 +23,7 @@ public class KeywordHandler{
     /// </summary>
     /// <param name="word">The Keyword</param>
     /// <param name="t">The Handler Type</param>
-    public KeywordHandler(string word, ImportHandler t)
+    public KSIKeywordHandler(string word, ImportHandler t)
     {
 
         keyword = word;
@@ -40,7 +40,7 @@ public class KeywordHandler{
         {
 
             //New Null Reference is Added
-            KSIData.keywordList.Add(new KeywordHandler());
+            KSIData.keywordList.Add(new KSIKeywordHandler());
 
         }
         else if ((indexToChange < 0 &&
@@ -48,7 +48,7 @@ public class KeywordHandler{
         {
 
             //New Null Reference is Added At End of List
-            KSIData.keywordList.Add(new KeywordHandler());
+            KSIData.keywordList.Add(new KSIKeywordHandler());
 
             //Get the Last Index of the List
             i = KSIData.keywordList.Count - 1;
@@ -58,9 +58,9 @@ public class KeywordHandler{
             {
 
                 //Temporarily Grab Object at i
-                KeywordHandler temp = KSIData.keywordList[i];
+                KSIKeywordHandler temp = KSIData.keywordList[i];
                 //Temporarily Grab Object Above i
-                KeywordHandler aboveTemp = KSIData.keywordList[i - 1];
+                KSIKeywordHandler aboveTemp = KSIData.keywordList[i - 1];
 
                 //Move the Object Above i Down
                 KSIData.keywordList[i] = aboveTemp;
@@ -80,7 +80,7 @@ public class KeywordHandler{
         {
 
             //New Null Reference is Added At End of List
-            KSIData.keywordList.Add(new KeywordHandler());
+            KSIData.keywordList.Add(new KSIKeywordHandler());
 
             //Get the Last Index of the List
             i = KSIData.keywordList.Count - 1;
@@ -90,9 +90,9 @@ public class KeywordHandler{
             {
 
                 //Temporarily Grab Object at i
-                KeywordHandler temp = KSIData.keywordList[i];
+                KSIKeywordHandler temp = KSIData.keywordList[i];
                 //Temporarily Grab Object Above i
-                KeywordHandler aboveTemp = KSIData.keywordList[i - 1];
+                KSIKeywordHandler aboveTemp = KSIData.keywordList[i - 1];
 
                 //Move the Object Above i Down
                 KSIData.keywordList[i] = aboveTemp;

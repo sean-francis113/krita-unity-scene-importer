@@ -43,12 +43,12 @@ public static class KSIData {
     /// <summary>
     /// The List of Keywords and their Handlers that Will Be Changed In Editor
     /// </summary>
-    public static List<KeywordHandler> keywordList = new List<KeywordHandler>
+    public static List<KSIKeywordHandler> keywordList = new List<KSIKeywordHandler>
     {
 
-        new KeywordHandler("platform", ImportHandler.PLATFORM),
-        new KeywordHandler("ground", ImportHandler.GROUND),
-        new KeywordHandler("backgroundscenery", ImportHandler.SCENERY)
+        new KSIKeywordHandler("platform", ImportHandler.PLATFORM),
+        new KSIKeywordHandler("ground", ImportHandler.GROUND),
+        new KSIKeywordHandler("backgroundscenery", ImportHandler.SCENERY)
 
     };
 
