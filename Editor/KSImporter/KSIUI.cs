@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 using System.IO;
 
 public class KSIUI : EditorWindow {
 
     bool loadData = true;
+    Vector2 keywordScrollPosition = Vector2.zero;
+    Vector2 layerScrollPosition = Vector2.zero;
 
     //Initialize Here
     private void OnEnable()
@@ -21,7 +24,7 @@ public class KSIUI : EditorWindow {
     {
 
         KSIUI window = GetWindow<KSIUI>(true, "Krita Scene Importer", true);
-        window.minSize = new Vector2(600, 600);
+        window.minSize = new Vector2(600, 575);
 
     }
 
@@ -79,6 +82,7 @@ public class KSIUI : EditorWindow {
 
             //Set UI Data When User Chooses a XML File
             SetFilePathData(EditorUtility.OpenFilePanel("Select XML File To Import With", KSIData.filepathLastOpened ?? Application.dataPath, ""));
+            SaveKSIData();
 
         }
 
@@ -89,9 +93,9 @@ public class KSIUI : EditorWindow {
         KSIData.xmlFileName = EditorGUILayout.TextField("XML File Name: ", KSIData.xmlFileName);
 
         EditorGUILayout.Space();
-
+        
         KSIData.useFolders = EditorGUILayout.BeginToggleGroup("Used Sub-Folders", KSIData.useFolders);
-        KSIData.exportFolder = EditorGUILayout.TextField("Export Folder:", KSIData.exportFolder);
+        //KSIData.exportFolder = EditorGUILayout.TextField("Export Folder:", KSIData.exportFolder);
         KSIData.xmlFolder = EditorGUILayout.TextField("XML Folder:", KSIData.xmlFolder);
         EditorGUILayout.EndToggleGroup();
 
@@ -99,7 +103,9 @@ public class KSIUI : EditorWindow {
 
         GUILayout.Label("Keywords and Handlers", EditorStyles.boldLabel);
         EditorGUILayout.Space();
+        keywordScrollPosition = EditorGUILayout.BeginScrollView(keywordScrollPosition, GUILayout.Width(575), GUILayout.Height(100));
         DisplayKeywordList();
+        EditorGUILayout.EndScrollView();
         EditorGUILayout.Space();
         KSIData.indexToChange = EditorGUILayout.IntField("Index to Change:", KSIData.indexToChange);
         EditorGUILayout.BeginHorizontal();
@@ -132,6 +138,15 @@ public class KSIUI : EditorWindow {
             KSITemplateCreator.AddHandler();
 
         }
+
+        EditorGUILayout.Space();
+
+        GUILayout.Label("Handler Layers", EditorStyles.boldLabel);
+        EditorGUILayout.Space();
+        layerScrollPosition = EditorGUILayout.BeginScrollView(layerScrollPosition, GUILayout.Width(575), GUILayout.Height(100));
+        DisplayLayerList();
+        EditorGUILayout.EndScrollView();
+
 
         EditorGUILayout.Space();
 
@@ -169,7 +184,7 @@ public class KSIUI : EditorWindow {
         EditorPrefs.SetString("BasePath", KSIData.baseFilePath);
         EditorPrefs.SetString("XMLFileName", KSIData.xmlFileName);
         EditorPrefs.SetBool("UseFolders", KSIData.useFolders);
-        EditorPrefs.SetString("ExportFolder", KSIData.exportFolder);
+        //EditorPrefs.SetString("ExportFolder", KSIData.exportFolder);
         EditorPrefs.SetString("XMLFolder", KSIData.xmlFolder);
 
         int i = 0;
@@ -215,7 +230,7 @@ public class KSIUI : EditorWindow {
         KSIData.baseFilePath = EditorPrefs.GetString("BasePath");
         KSIData.xmlFileName = EditorPrefs.GetString("XMLFileName");
         KSIData.useFolders = EditorPrefs.GetBool("UseFolders");
-        KSIData.exportFolder = EditorPrefs.GetString("ExportFolder");
+        //KSIData.exportFolder = EditorPrefs.GetString("ExportFolder");
         KSIData.xmlFolder = EditorPrefs.GetString("XMLFolder");
 
         for(int i = 0; i < KSIData.keywordList.Count; i++)
@@ -264,6 +279,25 @@ public class KSIUI : EditorWindow {
             EditorGUILayout.BeginHorizontal();
             KSIData.keywordList[i].keyword = EditorGUILayout.TextField("Keyword " + (i + 1), KSIData.keywordList[i].keyword);
             KSIData.keywordList[i].handler = (ImportHandler)EditorGUILayout.EnumPopup("Keyword Handler:", KSIData.keywordList[i].handler);
+            EditorGUILayout.EndHorizontal();
+
+        }
+
+    }
+
+    /// <summary>
+    /// Repaints the UI With the New List of Handler Layers
+    /// </summary>
+    public static void DisplayLayerList()
+    {
+
+        KSIKeywordHandler.RebuildLayerList();
+
+        for(int i = 0; i < KSIKeywordHandler.layerList.Count; i++)
+        {
+
+            EditorGUILayout.BeginHorizontal();
+            KSIKeywordHandler.layerList[i].layerMask = EditorGUILayout.LayerField("Handler " + KSIKeywordHandler.layerList[i].handler + ":", KSIKeywordHandler.layerList[i].layerMask);
             EditorGUILayout.EndHorizontal();
 
         }
@@ -404,7 +438,7 @@ public class KSIUI : EditorWindow {
             {
 
                 KSIData.useFolders = true;
-                KSIData.xmlFolder = XML_FOLDER_NAMES[i];
+                KSIData.xmlFolder = XML_FOLDER_NAMES[i] + "/";
                 break;
 
             }
@@ -417,6 +451,7 @@ public class KSIUI : EditorWindow {
         if(KSIData.useFolders)
         {           
 
+            /*
             //Look Through the IMAGE_FOLDER_NAMES Array
             for(int i = 0; i < IMAGE_FOLDER_NAMES.Length; i++)
             {
@@ -436,6 +471,7 @@ public class KSIUI : EditorWindow {
                 KSIData.exportFolder = "";
 
             }
+            */
 
             //Set the Base File Path Without Either XML or Image Export Folders
             KSIData.baseFilePath = baseFilePath;

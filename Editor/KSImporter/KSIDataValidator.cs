@@ -150,6 +150,7 @@ public static class KSIDataValidator{
 
         }
 
+        /*
         //If the Export Folder Field is Empty
         if (KSIData.useFolders && KSIData.exportFolder == "")
         {
@@ -183,6 +184,7 @@ public static class KSIDataValidator{
             Debug.Log("Added Slash to End of Export Folder");
 
         }
+        */
 
         return true;
 
@@ -274,7 +276,7 @@ public static class KSIDataValidator{
                 "Yes, Save to 'Assets' Folder", "No, Return to Importer"))
             {
 
-                KSIData.sceneFilePath = Application.dataPath;
+                KSIData.sceneFilePath = "Assets/";
 
             }
             else
@@ -290,11 +292,77 @@ public static class KSIDataValidator{
         else
         {
 
-            if(!KSIData.sceneFilePath.StartsWith(Application.dataPath))
+            //Scene File Path Not In Relation to Project
+            if(!KSIData.sceneFilePath.StartsWith("Assets/") && !KSIData.sceneFilePath.StartsWith("Assets\\"))
             {
 
-                string temp = Application.dataPath + "/" + KSIData.sceneFilePath + "/";
-                KSIData.sceneFilePath = temp;
+                char[] separators = { '/', '\\' };
+
+                string[] sceneSplit = KSIData.sceneFilePath.Split(separators);
+                List<string> splitList = new List<string>();
+
+                //Convert sceneSplit to List
+                foreach (var directory in sceneSplit)
+                {
+
+                    splitList.Add(directory);
+
+                }
+
+                int assetIndex = 0;
+
+                //If Assets Folder was Included in String, Where is it?
+                for(int i = 0; i < splitList.Count; i++)
+                {
+
+                    if(splitList[i] == "Assets")
+                    {
+
+                        assetIndex = i;
+                        Debug.Log("Found Assets At Index " + i);
+
+                    }
+
+                }
+
+                //If We Found Assets Directory
+                if(assetIndex != 0)
+                {
+
+                    //Remove Everything Up to Asset Directory
+                    for(int i = 0; i < assetIndex; i++)
+                    {
+
+                        splitList.RemoveAt(0);
+
+
+                    }
+
+                }
+
+                string newPath = "";
+
+                for(int i = 0; i < splitList.Count; i++)
+                {
+
+                    newPath += splitList[i] + "/";
+
+                }
+
+                KSIData.sceneFilePath = newPath;
+
+            }
+            else
+            {
+
+                if(KSIData.sceneFilePath[KSIData.sceneFilePath.Length - 1] != '/' &&
+                    KSIData.sceneFilePath[KSIData.sceneFilePath.Length - 1] != '\\')
+                {
+
+                    string temp = KSIData.sceneFilePath + "/";
+                    KSIData.sceneFilePath = temp;
+
+                }
 
             }
 
@@ -338,11 +406,75 @@ public static class KSIDataValidator{
         else
         {
 
-            if (!KSIData.imageFilePath.StartsWith(Application.dataPath))
+            //Scene File Path Not In Relation to Project
+            if (!KSIData.imageFilePath.StartsWith("Assets/") && !KSIData.imageFilePath.StartsWith("Assets\\"))
             {
 
-                string temp = Application.dataPath + "/" + KSIData.imageFilePath + "/";
-                KSIData.imageFilePath = temp;
+                char[] separators = { '/', '\\' };
+
+                string[] sceneSplit = KSIData.imageFilePath.Split(separators);
+                List<string> splitList = new List<string>();
+
+                //Convert sceneSplit to List
+                foreach (var directory in sceneSplit)
+                {
+
+                    splitList.Add(directory);
+
+                }
+
+                int assetIndex = 0;
+
+                //If Assets Folder was Included in String, Where is it?
+                for (int i = 0; i < splitList.Count; i++)
+                {
+
+                    if (splitList[i] == "Assets")
+                    {
+
+                        assetIndex = i;
+
+                    }
+
+                }
+
+                //If We Found Assets Directory
+                if (assetIndex != 0)
+                {
+
+                    //Remove Everything Up to Asset Directory
+                    for (int i = 0; i < assetIndex; i++)
+                    {
+
+                        splitList.RemoveAt(0);
+
+                    }
+
+                }
+
+                string newPath = "";
+
+                for (int i = 0; i < splitList.Count; i++)
+                {
+
+                    newPath += splitList[i] + "/";
+
+                }
+
+                KSIData.imageFilePath = newPath;
+
+            }
+            else
+            {
+
+                if (KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] != '/' &&
+                    KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] != '\\')
+                {
+
+                    string temp = KSIData.imageFilePath + "/";
+                    KSIData.imageFilePath = temp;
+
+                }
 
             }
 

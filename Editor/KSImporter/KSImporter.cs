@@ -16,14 +16,49 @@ public class KSImporter : MonoBehaviour {
     public class ImageData
     {
 
+        /// <summary>
+        /// The Name of the Image
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The Name of the Associated Game Object in Scene
+        /// </summary>
         public string NameInScene { get; set; }
+
+        /// <summary>
+        /// The Full Filename of the Image
+        /// </summary>
         public string Filename { get; set; }
+
+        /// <summary>
+        /// The Image's Extension (.png, .jpg, etc)
+        /// </summary>
         public string FileExtension { get; set; }
+
+        /// <summary>
+        /// The Full Filepath of the Image
+        /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// The Keyword of the Image
+        /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// How Will We Handle Creating This Image In Scene?
+        /// </summary>
+        public ImportHandler handler; 
+
+        /// <summary>
+        /// Where Was This Image in the Krita Project?
+        /// </summary>
         public Vector2 Position { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ImageData()
         {
 
@@ -37,6 +72,10 @@ public class KSImporter : MonoBehaviour {
 
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="imageData">Image Data to Construct With</param>
         public ImageData(ImageData imageData)
         {
 
@@ -50,6 +89,16 @@ public class KSImporter : MonoBehaviour {
 
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="nameInScene"></param>
+        /// <param name="filename"></param>
+        /// <param name="fileExtension"></param>
+        /// <param name="path"></param>
+        /// <param name="type"></param>
+        /// <param name="position"></param>
         public ImageData(string name, string nameInScene, string filename, string fileExtension, string path, string type, Vector2 position)
         {
 
@@ -79,7 +128,14 @@ public class KSImporter : MonoBehaviour {
     public class TextureData
     {
 
+        /// <summary>
+        /// The Image's Unity Texture
+        /// </summary>
         public Texture2D texture { get; set; }
+
+        /// <summary>
+        /// The Image's Data
+        /// </summary>
         public ImageData data { get; set; }
 
     }
@@ -156,6 +212,7 @@ public class KSImporter : MonoBehaviour {
 
         }
 
+        //Create a New String and Get Its Path
         string scenePath = CreateNewScene();
 
         //If the User Canceled Creating a Scene
@@ -166,15 +223,18 @@ public class KSImporter : MonoBehaviour {
 
         }
 
+        //Grab a Reference to the Scene So We Can Save it When We Are All Done
         Scene importScene = SceneManager.GetSceneByPath(scenePath);
         
+        //For Each Imported Image We Need to Handle
         for(int i = 0; i < imports.Count; i++)
         {
 
-            SaveImage(imports[i]);
+            //Get the Image So We Can Pass it by Reference
+            ImageData curImage = imports[i];
 
-            /*
-            bool success = LoadTexture(imports[i]);
+            //Save the Image Into the Project
+            bool success = SaveImage(ref curImage);
 
             if(!success)
             {
@@ -182,10 +242,45 @@ public class KSImporter : MonoBehaviour {
                 return;
 
             }
-            */
-            //success = ImportTexture(textures[i]);
+
+            Debug.Log("New Image Info: " + curImage.ToString());
+
+            //Load the Texture For Use With the Importer
+            success = LoadTexture(ref curImage);
+
+            if(!success)
+            {
+
+                return;
+
+            }
+
+            //Save the Image Information
+            imports[i] = curImage;
+            TextureData curTexture = textures[textures.Count - 1];
+            Debug.Log("Texture Data: " + curTexture.data.ToString());
+
+            //Set the Importer Information
+            SetImporter(ref curTexture);
+
+            //Set the Handler Information
+            SetHandler(ref curTexture);
+
+            //Save the New Texture Information
+            textures[textures.Count - 1] = curTexture;
 
         }
+
+        //Now That All of the Images Are Imported, Start Adding Them To The Scene
+        foreach (var texture in textures)
+        {
+
+
+
+        }
+
+        //Save the Final Scene
+        EditorSceneManager.SaveScene(importScene);
         
     }    
 
@@ -245,7 +340,7 @@ public class KSImporter : MonoBehaviour {
 
         //Create the Scene Path Scene. This is Where We Will Save Create and Save the Scene
         string scenePath = KSIData.sceneFilePath +
-            (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName);
+            (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity";
 
         if(File.Exists(scenePath) == true)
         {
@@ -258,7 +353,6 @@ public class KSImporter : MonoBehaviour {
             {
 
                 File.Delete(scenePath);
-                AssetDatabase.Refresh();
 
             }
             else
@@ -272,7 +366,9 @@ public class KSImporter : MonoBehaviour {
 
         Scene newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-        EditorSceneManager.SaveScene(newScene, KSIData.sceneFilePath + "\\" + (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity");
+        EditorSceneManager.SaveScene(newScene, KSIData.sceneFilePath + (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity");
+
+        AssetDatabase.Refresh();
 
         return newScene.path;
 
@@ -282,14 +378,41 @@ public class KSImporter : MonoBehaviour {
     /// Save the Image Into the Project Files
     /// </summary>
     /// <param name="imageData">The Data of the Image to Save</param>
-    public static void SaveImage(ImageData imageData)
+    public static bool SaveImage(ref ImageData imageData)
     {
 
         //What Image Extensions Does This Importer Support?
         string[] supportedExtensions = { ".png", ".jpg", ".jpeg" };
 
+        bool fileFound = false;
+
+        for (int i = 0; i < supportedExtensions.Length; i++)
+        {
+
+            //If We Found the File Has the Currently Itterating Extension
+            if (File.Exists(imageData.Path + imageData.Filename + supportedExtensions[i]))
+            {
+
+                fileFound = true;
+                break;
+
+            }
+
+        }
+
+        if (!fileFound)
+        {
+
+            //If We Did Not Find the File, Tell the User
+            KSIUI.DisplayDialog("Error: File Does Not Exist!",
+                "The File the Importer is Looking for Does Not Exist!\n\nFile: " + imageData.Filename + "\n\nCannot Continue Import!",
+                "Okay");
+            return false;
+
+        }
+
         //Make Sure We Have the Right Image Name
-        string imageName = (KSIData.useCustomNames ? RenameImage(imageData) : imageData.Filename);
+        string imageName = RenameImage(imageData);
 
         //Initialize the Image Extension
         string imageExtension = "";
@@ -307,9 +430,35 @@ public class KSImporter : MonoBehaviour {
 
             }
 
+            string errorMessage = "The Image You Are Trying to Save is Not Supported By the Importer!\n\nSupported Extensions: { ";
+
+            for(int i = 0; i < supportedExtensions.Length; i++)
+            {
+
+                if (i != supportedExtensions.Length - 1)
+                {
+
+                    errorMessage += "'" + supportedExtensions[i] + "' , ";
+
+                }
+                else
+                {
+
+                    errorMessage += "'" + supportedExtensions[i] + "' ";
+
+                }
+
+            }
+
+            errorMessage += "}";
+
+            KSIUI.DisplayDialog("Error: Unsupported Image", errorMessage, "Okay");
+
+            return false;
+
         }
 
-        //Finally, Make Sure the Destination Path Exists
+        //Make Sure the Destination Path Exists
         //If Not, Create It
         if(!Directory.Exists(KSIData.imageFilePath))
         {
@@ -318,24 +467,33 @@ public class KSImporter : MonoBehaviour {
 
         }
 
-        //Now, We Can Save the Image
-        File.Copy(imageData.Path + imageData.Filename + imageExtension, KSIData.imageFilePath + (KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] == '/' ||
-            KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] == '\\' ? "" : "/") + imageName + imageExtension);
+        //If the File Already Exists
+        if (File.Exists(KSIData.imageFilePath + imageName + imageExtension))
+        {
+
+            //Delete the Image So We Can Re Save the File
+            File.Delete(KSIData.imageFilePath + imageName + imageExtension);
+
+        }
+
+        //We Can Save the Image
+        File.Copy(imageData.Path + imageData.Filename + imageExtension, KSIData.imageFilePath + imageName + imageExtension);
 
         //Last, Reset the ImageData to Our New Settings
         ImageData temp = new ImageData(imageData);
-        temp.Name = imageName;
+        temp.Filename = imageName;
         temp.FileExtension = imageExtension;
-        temp.Path = KSIData.imageFilePath + (
-            (KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] == '/' || 
-            KSIData.imageFilePath[KSIData.imageFilePath.Length - 1] == '\\' ? "" : "/")
-            );
+        temp.Path = KSIData.imageFilePath + imageName + imageExtension;
         imageData = new ImageData(temp);
+
+        AssetDatabase.Refresh();
+
+        return true;
 
     }
 
     /// <summary>
-    /// Rename an Imported Image Based on Settings From UI. 
+    /// Rename an Imported Image's Filename Based on Settings From UI. 
     /// NOTE: User Can Freely Change the Function to Fit Their Renaming Needs
     /// </summary>
     /// <param name="imageData">The Image Data That Contains the Name to Change</param>
@@ -345,29 +503,41 @@ public class KSImporter : MonoBehaviour {
 
         string newName = "";
 
-        //Split the Old File Name by Underscores, That Way We Can Only Grab the Middle Name
-        string[] splitName = imageData.Name.Split('_');
-
+        //What Index Does User Want to Stop Name Reconstruction At?
         //Index 0: Image Type/Keyword
         //Index 1: Middle Name/Krita Layer Name
         //Index 2: exported + Date Tag
         //Index 3: Time Tag
-        splitName[1] = KSIData.customImageName;
+        const int NAME_END_INDEX = 1;
+
+        //Split the Old File Name by Underscores, That Way We Can Grab Specific Names
+        string[] splitName = imageData.Filename.Split('_');
+
+        //If the User Wants to Use Custom Names
+        if (KSIData.useCustomNames)
+        {
+            
+            splitName[1] = KSIData.customImageName;
+
+        }
 
         //Reconstruct the Name
-        for(int i = 0; i < splitName.Length; i++)
+        for(int i = 0; i <= NAME_END_INDEX; i++)
         {
 
+            Debug.Log("Itterated Reconstruction!");
             newName += splitName[i];
 
             //If We Have Not Reached the End of the Name
-            if(i != splitName.Length - 1)
+            if(i != NAME_END_INDEX)
             {
 
                 //Restore the Underscores
                 newName += "_";
 
             }
+
+            Debug.Log("New Name Now: " + newName);
 
         }
 
@@ -381,23 +551,38 @@ public class KSImporter : MonoBehaviour {
     /// </summary>
     /// <param name="imageData">The ImageImportData to Load Texture From</param>
     /// <returns>True if Successful; False Otherwise</returns>
-    public static bool LoadTexture(ImageData imageData)
+    public static bool LoadTexture(ref ImageData imageData)
     {
 
         Texture2D tex = null;
         byte[] fileData;
 
-        if (File.Exists(imageData.Path))
+        string absolutePath = Application.dataPath;
+
+        string[] pathSplit = absolutePath.Split('/');
+
+        absolutePath = "";
+
+        for(int i = 0; i < pathSplit.Length - 1; i++)
         {
 
-            fileData = File.ReadAllBytes(imageData.Path);
+            absolutePath += pathSplit[i] + "/";
+
+        }
+
+        string texFilePath = absolutePath + imageData.Path;
+
+        if (File.Exists(texFilePath))
+        {
+
+            fileData = File.ReadAllBytes(texFilePath);
             tex = new Texture2D(2, 2);
             bool success = tex.LoadImage(fileData);
 
             if(!success)
             {
 
-                KSIUI.DisplayDialog("Error: Image Load Failure", "Something Happened and the Importer Could Not Load the Image at " + imageData.Path + "\n\nCannot Continue Import!", "Okay");
+                KSIUI.DisplayDialog("Error: Image Load Failure", "Something Happened and the Importer Could Not Load the Image at " + texFilePath + "\n\nCannot Continue Import!", "Okay");
                 return false;
 
             }
@@ -406,7 +591,7 @@ public class KSImporter : MonoBehaviour {
         else
         {
 
-            KSIUI.DisplayDialog("Error: Image Does Not Exist", "Something Happened and the Importer Cannot Find the Image at " + imageData.Path + "\n\nCannot Continue Import!", "Okay");
+            KSIUI.DisplayDialog("Error: Image Does Not Exist", "Something Happened and the Importer Cannot Find the Image at " + texFilePath + "\n\nCannot Continue Import!", "Okay");
             return false;
 
         }
@@ -418,6 +603,42 @@ public class KSImporter : MonoBehaviour {
 
         textures.Add(texture);
         return true;
+
+    }
+
+    /// <summary>
+    /// Sets the Texture Importer for the Passed In Texture
+    /// </summary>
+    /// <param name="texture">The Texture Data to Set the Importer For</param>
+    public static void SetImporter(ref TextureData texture)
+    {
+
+        TextureImporter importer = AssetImporter.GetAtPath(texture.data.Path) as TextureImporter;
+
+        importer.mipmapEnabled = true;
+        importer.isReadable = true;
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePivot = Vector2.zero;
+        importer.wrapMode = TextureWrapMode.Clamp;
+        importer.filterMode = FilterMode.Trilinear;
+        importer.alphaIsTransparency = true;
+
+        importer.alphaSource = TextureImporterAlphaSource.FromInput;
+        importer.SaveAndReimport();
+
+        AssetDatabase.Refresh();
+
+    }
+
+    /// <summary>
+    /// Get and Set the Appropriate Handler Information for Importing Into the Scene
+    /// </summary>
+    /// <param name="textureData">The Image That We Will Be Working On</param>
+    public static void SetHandler(ref TextureData textureData)
+    {
+
+        textureData.data.handler = KSIKeywordHandler.FindHandler(textureData.data.Type);
 
     }
 

@@ -1,11 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class KSIKeywordHandler{
 
     public string keyword;
     public ImportHandler handler;
+    public static List<HandlerLayer> layerList = new List<HandlerLayer>();
+
+    public class HandlerLayer
+    {
+
+        public ImportHandler handler;
+        public LayerMask layerMask;
+
+        public HandlerLayer()
+        {
+
+            handler = ImportHandler.NONE;
+
+        }
+
+        public HandlerLayer(ImportHandler h)
+        {
+
+            handler = h;
+
+        }
+
+    }
 
     /// <summary>
     /// Initialize a KeywordHandler Object
@@ -150,6 +174,47 @@ public class KSIKeywordHandler{
 
     }
 
+    /// <summary>
+    /// Rebuilds the Handler/Layer List to Use in the UI
+    /// </summary>
+    public static void RebuildLayerList()
+    {
+
+        layerList.Clear();
+
+        foreach (ImportHandler handler in Enum.GetValues(typeof(ImportHandler)))
+        {
+
+            layerList.Add(new HandlerLayer(handler));
+
+        }
+
+    }
+
+    /// <summary>
+    /// Find the Handler Associated With the Provided Keyword
+    /// </summary>
+    /// <param name="keyword">The Keyword We Need to Find the Handler Of</param>
+    /// <returns>The ImportHandler Associated With the Keyword</returns>
+    public static ImportHandler FindHandler(string keyword)
+    {
+
+        foreach(var word in KSIData.keywordList)
+        {
+
+            if(keyword == word.keyword)
+            {
+
+                return word.handler;
+
+            }
+
+        }
+
+        return ImportHandler.NONE;
+
+    }
+
     public static string TypeToStr(ImportHandler type)
     {
 
@@ -171,6 +236,7 @@ public class KSIKeywordHandler{
                 return ImportHandler.GROUND;
             case "SCENERY":
                 return ImportHandler.SCENERY;
+                //<Template Creator Will Add New Handler Case Here>
             default:
                 return ImportHandler.NONE;
 
@@ -190,18 +256,22 @@ public enum ImportHandler
     /// Only Save the Image. Do Not Add to Scene or Add Components to Image
     /// </summary>
     NONE,
+
     /// <summary>
     /// Add to Scene, Add a Collider(Box), Add a Platform Effector, Add Platform Layer to Image (If Platform Layer Exists) 
     /// </summary>
     PLATFORM,
+
     /// <summary>
     /// Add to Scene, Add a Collider(Box), Add Ground Layer to Image (If Ground Layer Exists)
     /// </summary>
     GROUND,
+
     /// <summary>
     /// Add to Scene, Add Scenery Layer to Image (If Scenery Layer Exists)
     /// </summary>
-    SCENERY
+    SCENERY,
+
     //<Template Creator Will Add User Created Handlers Below Here>
 
 };
