@@ -7,6 +7,8 @@ using System.IO;
 
 public class KSIUI : EditorWindow {
 
+    string handlerName = "";
+
     bool loadData = true;
     Vector2 keywordScrollPosition = Vector2.zero;
     Vector2 layerScrollPosition = Vector2.zero;
@@ -24,7 +26,7 @@ public class KSIUI : EditorWindow {
     {
 
         KSIUI window = GetWindow<KSIUI>(true, "Krita Scene Importer", true);
-        window.minSize = new Vector2(600, 575);
+        window.minSize = new Vector2(600, 900);
 
     }
 
@@ -88,6 +90,14 @@ public class KSIUI : EditorWindow {
 
         EditorGUILayout.Space();
 
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        EditorGUILayout.Space();
+
+        GUILayout.Label("Exporter Data", EditorStyles.boldLabel);
+
+        EditorGUILayout.Space();
+
         KSIData.xmlSceneName = EditorGUILayout.TextField("Scene Name: ", KSIData.xmlSceneName);
         KSIData.baseFilePath = EditorGUILayout.TextField("File Path:", KSIData.baseFilePath);
         KSIData.xmlFileName = EditorGUILayout.TextField("XML File Name: ", KSIData.xmlFileName);
@@ -101,22 +111,26 @@ public class KSIUI : EditorWindow {
 
         EditorGUILayout.Space();
 
-        GUILayout.Label("Keywords and Handlers", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
         EditorGUILayout.Space();
-        keywordScrollPosition = EditorGUILayout.BeginScrollView(keywordScrollPosition, GUILayout.Width(575), GUILayout.Height(100));
+
+        GUILayout.Label("Keywords", EditorStyles.boldLabel);
+        EditorGUILayout.Space();
+        keywordScrollPosition = EditorGUILayout.BeginScrollView(keywordScrollPosition, GUILayout.Width(position.width - 20), GUILayout.Height(100));
         DisplayKeywordList();
         EditorGUILayout.EndScrollView();
         EditorGUILayout.Space();
         KSIData.indexToChange = EditorGUILayout.IntField("Index to Change:", KSIData.indexToChange);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Add Keyword At 'Index to Change'"))
+        if (GUILayout.Button("Add Keyword At Index " + KSIData.indexToChange))
         {
 
             KSIKeywordHandler.AddKeyword(KSIData.indexToChange);
 
         }
 
-        if (GUILayout.Button("Remove Keyword At 'Index to Change'"))
+        if (GUILayout.Button("Remove Keyword At Index " + KSIData.indexToChange))
         {
 
             KSIKeywordHandler.RemoveKeyword(KSIData.indexToChange);
@@ -126,27 +140,67 @@ public class KSIUI : EditorWindow {
 
         EditorGUILayout.Space();
 
-        GUILayout.Label("Create New Keyword Handler", EditorStyles.boldLabel);
-        EditorGUILayout.Space();
-        KSITemplateCreator.handlerName = EditorGUILayout.TextField("New Handler Name:", KSITemplateCreator.handlerName);
-
-        EditorGUILayout.Space();
-
-        if (GUILayout.Button("Create Handler"))
-        {
-
-            KSITemplateCreator.AddHandler();
-
-        }
-
-        EditorGUILayout.Space();
-
         GUILayout.Label("Handler Layers", EditorStyles.boldLabel);
         EditorGUILayout.Space();
-        layerScrollPosition = EditorGUILayout.BeginScrollView(layerScrollPosition, GUILayout.Width(575), GUILayout.Height(100));
+        layerScrollPosition = EditorGUILayout.BeginScrollView(layerScrollPosition, GUILayout.Width(position.width - 20), GUILayout.Height(100));
         DisplayLayerList();
         EditorGUILayout.EndScrollView();
 
+        EditorGUILayout.Space();
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        EditorGUILayout.Space();
+
+        GUILayout.Label("Add/Remove Keyword Handlers", EditorStyles.boldLabel);
+        EditorGUILayout.Space();
+        handlerName = EditorGUILayout.TextField("New Handler Name:", handlerName);
+
+        EditorGUILayout.Space();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Create " + ((handlerName == "") ? "???" : handlerName.ToUpper())))
+        {
+
+            if (handlerName == "")
+            {
+
+                DisplayDialog("Error: No Handler Specified", "There is No Handler Specified!\n\nCannot Add!", "Okay");
+
+            }
+            else
+            {
+
+                KSITemplateManager.AddHandler(handlerName);
+                AssetDatabase.Refresh();
+
+            }
+
+        }
+
+        if(GUILayout.Button("Remove " + ((handlerName == "") ? "???" : handlerName.ToUpper())))
+        {
+
+            if (handlerName == "")
+            {
+
+                DisplayDialog("Error: No Handler Specified", "There is No Handler Specified!\n\nCannot Remove!", "Okay");
+
+            }
+            else
+            {
+
+                KSITemplateManager.RemoveHandler(handlerName);
+                AssetDatabase.Refresh();
+
+            }
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Space();
+
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
         EditorGUILayout.Space();
 
@@ -163,6 +217,18 @@ public class KSIUI : EditorWindow {
         EditorGUILayout.EndToggleGroup();
 
         EditorGUILayout.Space();
+
+        /*
+        if(GUILayout.Button("Update Importer"))
+        {
+
+            DisplayKeywordList();
+            DisplayLayerList();
+
+        }
+
+        EditorGUILayout.Space();
+        */
 
         if (GUILayout.Button("Import Scene"))
         {
@@ -210,7 +276,7 @@ public class KSIUI : EditorWindow {
 
         //Save Data After Keyword Handlers
         EditorPrefs.SetInt("Index", KSIData.indexToChange);
-        EditorPrefs.SetString("NewHandler", KSITemplateCreator.handlerName);
+        EditorPrefs.SetString("NewHandler", handlerName);
         EditorPrefs.SetString("ScenePath", KSIData.sceneFilePath);
         EditorPrefs.SetString("ImagePath", KSIData.imageFilePath);
         EditorPrefs.SetBool("UseCustomNames", KSIData.useCustomNames);
@@ -257,7 +323,7 @@ public class KSIUI : EditorWindow {
         KSIData.keywordList.TrimExcess();
 
         KSIData.indexToChange = EditorPrefs.GetInt("Index");
-        KSITemplateCreator.handlerName = EditorPrefs.GetString("NewHandler");
+        handlerName = EditorPrefs.GetString("NewHandler");
         KSIData.sceneFilePath = EditorPrefs.GetString("ScenePath");
         KSIData.imageFilePath = EditorPrefs.GetString("ImagePath");
         KSIData.useCustomNames = EditorPrefs.GetBool("UseCustomNames");
@@ -513,6 +579,22 @@ public class KSIUI : EditorWindow {
     {
 
         return EditorUtility.DisplayDialog(title, message, okayButtonString, cancelButtonString);
+
+    }
+
+    /// <summary>
+    /// Displays a Dialog Window
+    /// </summary>
+    /// <param name="title">The Title of the Window</param>
+    /// <param name="message">The Message Displayed Within the Window</param>
+    /// <param name="okayButtonString">The Label Shown on the 'Confirm' or 'Okay' Button</param>
+    /// <param name="cancelButtonString">The Label Shown on the 'Cancel' Button</param>
+    /// <param name="altButtonString">The Label Shown on the 'Alt' Button</param>
+    /// <returns>The Number According to the Button Pressed: 0 - Okay, 1 - Cancel, 3 - Alt</returns>
+    public static int DisplayDialog(string title, string message, string okayButtonString, string cancelButtonString, string altButtonString)
+    {
+
+        return EditorUtility.DisplayDialogComplex(title, message, okayButtonString, cancelButtonString, altButtonString);
 
     }
 

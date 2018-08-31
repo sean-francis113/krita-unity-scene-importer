@@ -495,20 +495,21 @@ public static class KSIDataValidator{
         if (KSIData.useCustomNames && KSIData.customSceneName == "")
         {
 
-            //Let the User Choose if They Want to Return to Fix the Empty Field or Not Use Sub-Folders
-            if (KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Scene Name Empty",
-                "You Have Set 'Use Custom Names' to True Yet the Custom Scene Field is Empty. Do You Want to Use Custom Names?",
-                "Yes, Return to the Importer", "No, Turn Off 'Use Custom Names'"))
+            switch (KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Image Name Empty",
+                "You Have Set 'Use Custom Names' to True Yet the Custom Scene Name Field is Empty.\n\n Do You Want to Add a Custom Image Name, Turn Off 'Use Custom Names', or Not Use Custom Scene Names?",
+                "Return to the Importer", "Turn Off 'Use Custom Names'", "Don't Use Custom Scene Names"))
             {
 
-                return false;
-
-            }
-            else
-            {
-
-                KSIData.useCustomNames = false;
-                return true;
+                case 0:
+                    return false;
+                case 1:
+                    KSIData.useCustomNames = false;
+                    return true;
+                case 2:
+                    return true;
+                default:
+                    Debug.Log("Unrecognized Operation");
+                    break;
 
             }
 
@@ -518,20 +519,21 @@ public static class KSIDataValidator{
         if (KSIData.useCustomNames && KSIData.customImageName == "")
         {
 
-            //Let the User Choose if They Want to Return to Fix the Empty Field or Not Use Sub-Folders
-            if (KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Image Name Empty",
-                "You Have Set 'Use Custom Names' to True Yet the Custom Image Name Field is Empty. Do You Want to Use Custom Names?",
-                "Yes, Return to the Importer", "No, Turn Off 'Use Folders'"))
+            switch(KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Image Name Empty",
+                "You Have Set 'Use Custom Names' to True Yet the Custom Image Name Field is Empty.\n\n Do You Want to Add a Custom Image Name, Turn Off 'Use Custom Names', or Not Use Custom Image Names?",
+                "Return to the Importer", "Turn Off 'Use Custom Names'", "Don't Use Custom Image Names"))
             {
 
-                return false;
-
-            }
-            else
-            {
-
-                KSIData.useCustomNames = false;
-                return true;
+                case 0:
+                    return false;
+                case 1:
+                    KSIData.useCustomNames = false;
+                    return true;
+                case 2:
+                    return true;
+                default:
+                    Debug.Log("Unrecognized Operation");
+                    break;
 
             }
 

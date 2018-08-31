@@ -166,6 +166,11 @@ public class KSImporter : MonoBehaviour {
     static List<TextureData> textures = new List<TextureData>();
 
     /// <summary>
+    /// Used to Add a Unique Number to Files With the Same Type and Name
+    /// </summary>
+    static int customNameCount = 0;
+
+    /// <summary>
     /// Begins the Import Process
     /// </summary>
     public static void StartImport()
@@ -205,10 +210,10 @@ public class KSImporter : MonoBehaviour {
         //Load Data from XML Data
         LoadXMLData(XMLPath);
 
-        for(int i = 0; i < imports.Count; i++)
+        if(KSIData.useCustomNames && KSIData.customImageName != "")
         {
 
-            Debug.Log("ImageImportData " + i + ": " + imports[i].ToString());
+            SetCustomNames();
 
         }
 
@@ -340,7 +345,7 @@ public class KSImporter : MonoBehaviour {
 
         //Create the Scene Path Scene. This is Where We Will Save Create and Save the Scene
         string scenePath = KSIData.sceneFilePath +
-            (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity";
+            ((KSIData.useCustomNames && KSIData.customSceneName != "") ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity";
 
         if(File.Exists(scenePath) == true)
         {
@@ -513,14 +518,6 @@ public class KSImporter : MonoBehaviour {
         //Split the Old File Name by Underscores, That Way We Can Grab Specific Names
         string[] splitName = imageData.Filename.Split('_');
 
-        //If the User Wants to Use Custom Names
-        if (KSIData.useCustomNames)
-        {
-            
-            splitName[1] = KSIData.customImageName;
-
-        }
-
         //Reconstruct the Name
         for(int i = 0; i <= NAME_END_INDEX; i++)
         {
@@ -542,6 +539,62 @@ public class KSImporter : MonoBehaviour {
         }
 
         return newName;
+
+    }
+
+    /// <summary>
+    /// Sets the Filenames of the Images to Their New Custom Names
+    /// </summary>
+    public static void SetCustomNames()
+    {
+
+        for (int i = 0; i < KSIData.keywordList.Count; i++)
+        {
+
+            customNameCount = 0;
+            string currentKeyword = KSIData.keywordList[i].keyword.ToLower();
+
+            for (int j = 0; i < imports.Count; i++)
+            {               
+
+                string oldName = imports[j].Filename;
+                string keyword = imports[j].Type;
+
+                if (keyword.ToLower() == currentKeyword)
+                {
+
+                    string[] nameSplit = oldName.Split('_');
+
+                    nameSplit[1] = KSIData.customImageName + customNameCount;
+
+                    string finalName = "";
+
+                    for(int k = 0; k < nameSplit.Length; k++)
+                    {
+
+                        if(k != nameSplit.Length - 1)
+                        {
+
+                            finalName += nameSplit[k] + "_";
+
+                        }
+                        else
+                        {
+
+                            finalName += nameSplit[k];
+
+                        }
+
+                    }
+
+                    imports[j].Filename = finalName;
+                    break;
+
+                }
+
+            }
+
+        }
 
     }
 

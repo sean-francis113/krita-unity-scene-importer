@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +21,7 @@ public class KSISceneManager : MonoBehaviour {
             case ImportHandler.SCENERY:
                 CreateScenery(imageObject, textureData);
                 break;
+			//<Template Creator Will Add New Function Call Case Here>
             default: //If Handler Was None
                 return;
 
@@ -38,7 +39,7 @@ public class KSISceneManager : MonoBehaviour {
 
 
 
-    }
+    }//FunctionEnd, DO NOT REMOVE THIS COMMENT!
 
     /// <summary>
     /// 
@@ -50,7 +51,7 @@ public class KSISceneManager : MonoBehaviour {
 
 
 
-    }
+    }//FunctionEnd, DO NOT REMOVE THIS COMMENT!
 
     /// <summary>
     /// 
@@ -62,6 +63,10 @@ public class KSISceneManager : MonoBehaviour {
 
 
 
-    }
+    }//FunctionEnd, DO NOT REMOVE THIS COMMENT!
+
+	//<Template Creator Will Add New Handler Functions Here>
 
 }
+
+

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -10,7 +10,7 @@ public class KSIKeywordHandler{
     public static List<HandlerLayer> layerList = new List<HandlerLayer>();
 
     public class HandlerLayer
-    {
+    {        
 
         public ImportHandler handler;
         public LayerMask layerMask;
@@ -67,6 +67,7 @@ public class KSIKeywordHandler{
             KSIData.keywordList.Add(new KSIKeywordHandler());
 
         }
+
         else if ((indexToChange < 0 &&
                KSIUI.DisplayDialog("Error: Index Out of Range (Small)", "Provided Index is Too Small! Would You Like to Add a Keyword at the First Index?", "Add Keyword", "Do Not Add Keyword")))
         {
@@ -83,11 +84,13 @@ public class KSIKeywordHandler{
 
                 //Temporarily Grab Object at i
                 KSIKeywordHandler temp = KSIData.keywordList[i];
+
                 //Temporarily Grab Object Above i
                 KSIKeywordHandler aboveTemp = KSIData.keywordList[i - 1];
 
                 //Move the Object Above i Down
                 KSIData.keywordList[i] = aboveTemp;
+
                 //Move the Object at i Up
                 KSIData.keywordList[i - 1] = temp;
 
@@ -98,9 +101,10 @@ public class KSIKeywordHandler{
             KSIUI.DisplayKeywordList();
 
         }
+
         else if ((indexToChange > KSIData.keywordList.Count - 1 &&
                 KSIUI.DisplayDialog("Error: Index Out of Range (Large)", "Provided Index is Too Large! Would You Like to Add a Keyword at the Last Index?", "Add Keyword", "Do Not Add Keyword")) ||
-            (indexToChange < KSIData.keywordList.Count - 1))
+        (indexToChange < KSIData.keywordList.Count - 1))
         {
 
             //New Null Reference is Added At End of List
@@ -115,11 +119,13 @@ public class KSIKeywordHandler{
 
                 //Temporarily Grab Object at i
                 KSIKeywordHandler temp = KSIData.keywordList[i];
+
                 //Temporarily Grab Object Above i
                 KSIKeywordHandler aboveTemp = KSIData.keywordList[i - 1];
 
                 //Move the Object Above i Down
                 KSIData.keywordList[i] = aboveTemp;
+
                 //Move the Object at i Up
                 KSIData.keywordList[i - 1] = temp;
 
@@ -132,7 +138,7 @@ public class KSIKeywordHandler{
         }
 
     }
-
+    
     public static void RemoveKeyword(int indexToChange)
     {
 
@@ -151,9 +157,11 @@ public class KSIKeywordHandler{
             int i = KSIData.keywordList.Count - 1;
 
             KSIData.keywordList.RemoveAt(i);
+
             KSIUI.DisplayKeywordList();
 
         }
+
         else if ((indexToChange < 0 &&
                 KSIUI.DisplayDialog("Error: Index Out of Range (Small)", "Provided Index is Too Small! Would You Like to Remove the Keyword at the First Index?", "Remove Keyword", "Do Not Remove Keyword")))
         {
@@ -161,6 +169,7 @@ public class KSIKeywordHandler{
             int i = 0;
 
             KSIData.keywordList.RemoveAt(i);
+
             KSIUI.DisplayKeywordList();
 
         }
@@ -214,7 +223,7 @@ public class KSIKeywordHandler{
         return ImportHandler.NONE;
 
     }
-
+    
     public static string TypeToStr(ImportHandler type)
     {
 
@@ -236,7 +245,6 @@ public class KSIKeywordHandler{
                 return ImportHandler.GROUND;
             case "SCENERY":
                 return ImportHandler.SCENERY;
-                //<Template Creator Will Add New Handler Case Here>
             default:
                 return ImportHandler.NONE;
 
@@ -252,26 +260,10 @@ public class KSIKeywordHandler{
 public enum ImportHandler
 {
 
-    /// <summary>
-    /// Only Save the Image. Do Not Add to Scene or Add Components to Image
-    /// </summary>
     NONE,
-
-    /// <summary>
-    /// Add to Scene, Add a Collider(Box), Add a Platform Effector, Add Platform Layer to Image (If Platform Layer Exists) 
-    /// </summary>
     PLATFORM,
-
-    /// <summary>
-    /// Add to Scene, Add a Collider(Box), Add Ground Layer to Image (If Ground Layer Exists)
-    /// </summary>
     GROUND,
-
-    /// <summary>
-    /// Add to Scene, Add Scenery Layer to Image (If Scenery Layer Exists)
-    /// </summary>
     SCENERY,
-
-    //<Template Creator Will Add User Created Handlers Below Here>
+	//<Template Creator Will Add User Created Handlers Here>
 
 };
