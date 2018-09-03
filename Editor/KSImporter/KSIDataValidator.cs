@@ -122,8 +122,8 @@ public static class KSIDataValidator{
 
             //Let the User Choose if They Want to Return to Fix the Empty Field or Not Use Sub-Folders
             if (KSIUI.DisplayDialog("Error: Use Folders True But XML Folder Empty",
-                "You Have Set 'Use Folders' to True Yet the XML Folder Field is Empty. Do You Want to Use Folders?",
-                "Yes, Return to the Importer", "No, Turn Off 'Use Folders'"))
+                "You Have Set 'Use Folders' to True Yet the XML Folder Field is Empty. Do You Want to Use Folders?\n\nYes: Return to Importer\nNo: Continue Import",
+                "Yes", "No"))
             {
 
                 return false;
@@ -149,42 +149,6 @@ public static class KSIDataValidator{
             Debug.Log("Added Slash to End of XML Folder");
 
         }
-
-        /*
-        //If the Export Folder Field is Empty
-        if (KSIData.useFolders && KSIData.exportFolder == "")
-        {
-
-            //Let the User Choose if They Want to Return to Fix the Empty Field or Not Use Sub-Folders
-            if (KSIUI.DisplayDialog("Error: Use Folders True But Export Folder Empty",
-                "You Have Set 'Use Folders' to True Yet the Export Folder Field is Empty. Do You Want to Use Folders?",
-                "Yes, Return to the Importer", "No, Turn Off 'Use Folders'"))
-            {
-
-                return false;
-
-            }
-            else
-            {
-
-                KSIData.useFolders = false;
-                return true;
-
-            }
-
-        }
-
-        //If The Slashes Were Not Typed Out
-        if (!KSIData.exportFolder.EndsWith("/") &&
-           !KSIData.exportFolder.EndsWith("\\"))
-        {
-
-            string temp = KSIData.exportFolder + "/";
-            KSIData.exportFolder = temp;
-            Debug.Log("Added Slash to End of Export Folder");
-
-        }
-        */
 
         return true;
 
@@ -237,7 +201,7 @@ public static class KSIDataValidator{
                 if (!KSIUI.DisplayDialog("Error: Not All Handlers Valid",
                     "Not All Keyword Fields Have a Valid Handler Type Specified! Would You Like to Continue Import?\n\n" +
                     "NOTE: Any Handlers Specified as 'NONE' Will Only Save the Files, They Will Not Be Created In Scene " +
-                    "nor Have Any Components Added To Them!", "Yes, Continue Import", "No, Stop Import"))
+                    "nor Have Any Components Added To Them!\n\nYes: Continue Import\nNo: Stop Import", "Yes", "No"))
                 {
 
                     return false;
@@ -272,8 +236,8 @@ public static class KSIDataValidator{
         {
 
             if (KSIUI.DisplayDialog("Error: Scene File Path is Empty",
-                "The Scene File Path Field is Empty! Do You Want to Save Everything to the 'Assets' Folder?",
-                "Yes, Save to 'Assets' Folder", "No, Return to Importer"))
+                "The Scene File Path Field is Empty! Do You Want to Save Everything to the 'Assets' Folder?\n\nYes: Save to 'Assets' Folder\nNo: Return to Importer",
+                "Yes", "No"))
             {
 
                 KSIData.sceneFilePath = "Assets/";
@@ -386,8 +350,8 @@ public static class KSIDataValidator{
         {
 
             if (KSIUI.DisplayDialog("Error: Image File Path is Empty",
-                "The Image File Path Field is Empty! Do You Want to Save Everything to the 'Assets' Folder?",
-                "Yes, Save to 'Assets' Folder", "No, Return to Importer"))
+                "The Image File Path Field is Empty! Do You Want to Save Everything to the 'Assets' Folder?\n\nYes: Save to 'Assets' Folder\nNo: Return to Importer",
+                "Yes", "No"))
             {
 
                 KSIData.imageFilePath = Application.dataPath;
@@ -496,8 +460,8 @@ public static class KSIDataValidator{
         {
 
             switch (KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Image Name Empty",
-                "You Have Set 'Use Custom Names' to True Yet the Custom Scene Name Field is Empty.\n\n Do You Want to Add a Custom Image Name, Turn Off 'Use Custom Names', or Not Use Custom Scene Names?",
-                "Return to the Importer", "Turn Off 'Use Custom Names'", "Don't Use Custom Scene Names"))
+                "You Have Set 'Use Custom Names' to True Yet the Custom Scene Name Field is Empty.\n\nDo You Want to:\nAdd a Custom Scene Name (Return)\nTurn Off 'Use Custom Names' (Turn Off)\nNot Use Custom Scene Names (Don't Use)",
+                "Return", "Turn Off", "Don't Use"))
             {
 
                 case 0:
@@ -520,8 +484,8 @@ public static class KSIDataValidator{
         {
 
             switch(KSIUI.DisplayDialog("Error: Use Custom Names True But Custom Image Name Empty",
-                "You Have Set 'Use Custom Names' to True Yet the Custom Image Name Field is Empty.\n\n Do You Want to Add a Custom Image Name, Turn Off 'Use Custom Names', or Not Use Custom Image Names?",
-                "Return to the Importer", "Turn Off 'Use Custom Names'", "Don't Use Custom Image Names"))
+                "You Have Set 'Use Custom Names' to True Yet the Custom Image Name Field is Empty.\n\nDo You Want to:\nAdd a Custom Image Name (Return)\nTurn Off 'Use Custom Names' (Turn Off)\nNot Use Custom Image Names (Don't Use)",
+                "Return", "Turn Off", "Don't Use"))
             {
 
                 case 0:

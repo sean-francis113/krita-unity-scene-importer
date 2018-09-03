@@ -9,6 +9,8 @@ using System.Xml.Linq;
 
 public class KSImporter : MonoBehaviour {
 
+    #region Data Sets
+
     /// <summary>
     /// Holds the Data That Will Be Loaded From the XML File. 
     /// It Will Then Be Altered During Runtime as We Move Files Around
@@ -140,6 +142,10 @@ public class KSImporter : MonoBehaviour {
 
     }
 
+    #endregion
+
+    #region Local Variables
+
     /// <summary>
     /// The Document Created and Loaded When We Start Loading From XML File
     /// </summary>
@@ -169,6 +175,10 @@ public class KSImporter : MonoBehaviour {
     /// Used to Add a Unique Number to Files With the Same Type and Name
     /// </summary>
     static int customNameCount = 0;
+
+    #endregion
+
+    #region Functionality
 
     /// <summary>
     /// Begins the Import Process
@@ -271,6 +281,9 @@ public class KSImporter : MonoBehaviour {
             //Set the Handler Information
             SetHandler(ref curTexture);
 
+            //Set the Images Name in Scene
+            SetImageSceneName(ref curTexture);
+
             //Save the New Texture Information
             textures[textures.Count - 1] = curTexture;
 
@@ -280,12 +293,16 @@ public class KSImporter : MonoBehaviour {
         foreach (var texture in textures)
         {
 
-
+            KSISceneManager.AddToScene(texture);
 
         }
 
         //Save the Final Scene
         EditorSceneManager.SaveScene(importScene);
+
+        //Reset Lists For Reuse
+        textures.Clear();
+        imports.Clear();
         
     }    
 
@@ -370,6 +387,9 @@ public class KSImporter : MonoBehaviour {
         }
 
         Scene newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        GameObject mainCamera = new GameObject("Main Camera", typeof(Camera));
+        mainCamera.transform.position = new Vector3(0.0f, 0.0f, -10.0f);
 
         EditorSceneManager.SaveScene(newScene, KSIData.sceneFilePath + (KSIData.useCustomNames ? KSIData.customSceneName : KSIData.xmlSceneName) + ".unity");
 
@@ -694,5 +714,19 @@ public class KSImporter : MonoBehaviour {
         textureData.data.handler = KSIKeywordHandler.FindHandler(textureData.data.Type);
 
     }
+
+    /// <summary>
+    /// Set the Name That the Final Object Will Have In Scene. 
+    /// NOTE: Can Be Altered To User's Needs
+    /// </summary>
+    /// <param name="textureData"></param>
+    public static void SetImageSceneName(ref TextureData textureData)
+    {
+
+        textureData.data.NameInScene = textureData.data.Filename;
+
+    }
+
+    #endregion
 
 }

@@ -13,12 +13,13 @@ public class KSIKeywordHandler{
     {        
 
         public ImportHandler handler;
-        public LayerMask layerMask;
+        public LayerMask layer;
 
         public HandlerLayer()
         {
 
             handler = ImportHandler.NONE;
+            layer = LayerMask.NameToLayer("Default");
 
         }
 
@@ -26,6 +27,15 @@ public class KSIKeywordHandler{
         {
 
             handler = h;
+            layer = LayerMask.NameToLayer("Default");
+
+        }
+
+        public HandlerLayer(ImportHandler h, int l)
+        {
+
+            handler = h;
+            layer = l;
 
         }
 
@@ -189,12 +199,30 @@ public class KSIKeywordHandler{
     public static void RebuildLayerList()
     {
 
-        layerList.Clear();
+        bool found = false;
 
         foreach (ImportHandler handler in Enum.GetValues(typeof(ImportHandler)))
         {
 
-            layerList.Add(new HandlerLayer(handler));
+            for(int i = 0; i < layerList.Count; i++)
+            {
+
+                if(layerList[i].handler == handler)
+                {
+
+                    found = true;
+                    break;
+
+                }
+
+            }
+
+            if(!found)
+            {
+
+                layerList.Add(new HandlerLayer(handler));
+
+            }
 
         }
 
@@ -267,3 +295,7 @@ public enum ImportHandler
 	//<Template Creator Will Add User Created Handlers Here>
 
 };
+
+
+
+

@@ -15,27 +15,45 @@ public static class KSITemplateManager {
         string KSIKeywordHandlerPath = "Assets/Editor/KSImporter/KSIKeywordHandler.cs";
         string KSISceneManagerPath = "Assets/Editor/KSImporter/KSISceneManager.cs";
         string importHandlerTemplate = 
-            "\t<HandlerName>,\r\n" +
+            "\t<HandlerName>,\n" +
             "\t//<Template Creator Will Add User Created Handlers Here>";
         string strToTypeTemplate =
-            "case \"<HandlerName>\":\r\n" +
-            "\t\t\t\treturn ImportHandler.<HandlerName>;\r\n" +
+            "case \"<HandlerName>\":\n" +
+            "\t\t\t\treturn ImportHandler.<HandlerName>;\n" +
             "\t\t\t//<Template Creator Will Add New StrToType Case Here>";
         string functionCallTemplate = 
-            "case ImportHandler.<HandlerName>:\r\n" +
-            "\t\t\t\tCreate<HandlerName>(imageObject, textureData);\r\n"+
-            "\t\t\t\tbreak;\r\n" +
+            "case ImportHandler.<HandlerName>:\n" +
+            "\t\t\t\tCreate<HandlerName>(textureData);\n"+
+            "\t\t\t\tbreak;\n" +
             "\t\t\t//<Template Creator Will Add New Function Call Case Here>";
         string functionTemplate = 
-            "/// <summary>\r\n" +
-            "\t/// \r\n" +
-            "\t/// </summary>\r\n" +
-            "\t/// <param name=\"imageObject\"></param>\r\n" +
-            "\t/// <param name=\"textureData\"></param>\r\n" +
-            "\tpublic static void Create<HandlerName>(GameObject imageObject, KSImporter.TextureData textureData)\r\n" +
-            "\t{\r\n" +
-            "\t\r\n\r\n\r\n" +
-            "\t}//FunctionEnd, DO NOT REMOVE THIS COMMENT!\r\n\r\n" +
+            "/// <summary>\n" +
+            "\t/// \n" +
+            "\t/// </summary>\n" +
+            "\t/// <param name=\"imageObject\"></param>\n" +
+            "\t/// <param name=\"textureData\"></param>\n" +
+            "\tpublic static void Create<HandlerName>(KSImporter.TextureData textureData)\n" +
+            "\t{\n\n" +
+            "\t\tGameObject imageObject = new GameObject(textureData.data.NameInScene);\n" +
+            "\t\timageObject.transform.position = new Vector3(textureData.data.Position.x, textureData.data.Position.y, 0);\n" +
+            "\t\timageObject.AddComponent<SpriteRenderer>().sprite = \n" +
+            "\t\t\tSprite.Create(textureData.texture, \n" +
+            "\t\t\t\tnew Rect(0.0f, 0.0f, \n" +
+            "\t\t\t\t\ttextureData.texture.width, \n" +
+            "\t\t\t\t\ttextureData.texture.height), \n" +
+            "\t\t\t\tnew Vector2(0.5f, 0.5f), \n" +
+            "\t\t\t\t100.0f);\n\n" +
+            "\t\t//Add Functionality Here As Desired\n\n" +
+            "\t\t//Look Through the Layer/Handler List to Find the Layer Associated With This Handler\n" +
+            "\t\tfor (int i = 0; i < KSIKeywordHandler.layerList.Count; i++)\n" +
+            "\t\t{\n\n" +
+            "\t\t\tif (textureData.data.handler == KSIKeywordHandler.layerList[i].handler)\n" +
+            "\t\t\t\t//Set the Object's Layer to the Layer Chosen At UI\n" +
+            "\t\t\t\timageObject.layer = LayerMask.NameToLayer(InternalEditorUtility.layers[KSIKeywordHandler.layerList[i].layer]);\n" +
+            "\t\t\t\tbreak;\n\n" +
+            "\t\t\t}\n\n" +
+            "\t\t}\n\n" +
+            "\t}//FunctionEnd, DO NOT REMOVE THIS COMMENT!\n\n" +
             "\t//<Template Creator Will Add New Handler Functions Here>";
 
         string importHandlerName = handlerName.ToUpper();
@@ -96,7 +114,7 @@ public static class KSITemplateManager {
         string functionCallTemplate =
             "case ImportHandler.<HandlerName>:";
         string functionTemplate =
-            "public static void Create<HandlerName>(GameObject imageObject, KSImporter.TextureData textureData)";
+            "public static void Create<HandlerName>(KSImporter.TextureData textureData)";
 
         string importHandlerName = handlerName.ToUpper();
 
@@ -554,7 +572,11 @@ public static class KSITemplateManager {
         return true;
 
     }
-
+    
+    /// <summary>
+    /// Reloads the Provided Script So it Has Consistant Line Endings
+    /// </summary>
+    /// <param name="path">The Filepath to the Script to Reset</param>
     public static void ResetLineEndings(string path)
     {
 

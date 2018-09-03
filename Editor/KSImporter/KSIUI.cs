@@ -274,6 +274,27 @@ public class KSIUI : EditorWindow {
 
         }
 
+        i = 0;
+
+        //Clear Previous Keyword Handler Keys
+        while (EditorPrefs.GetString("LayerType" + i) != "")
+        {
+
+            EditorPrefs.DeleteKey("LayerType" + i);
+            EditorPrefs.DeleteKey("HandlerLayer" + i);
+            i++;
+
+        }
+
+        //Save Keyword Handler Keys
+        for (i = 0; i < KSIKeywordHandler.layerList.Count; i++)
+        {
+
+            EditorPrefs.SetString("LayerType" + i, KSIKeywordHandler.TypeToStr(KSIKeywordHandler.layerList[i].handler));
+            EditorPrefs.SetInt("HandlerLayer" + i, KSIKeywordHandler.layerList[i].layer);
+
+        }
+
         //Save Data After Keyword Handlers
         EditorPrefs.SetInt("Index", KSIData.indexToChange);
         EditorPrefs.SetString("NewHandler", handlerName);
@@ -315,6 +336,27 @@ public class KSIUI : EditorWindow {
             {
                 KSIData.keywordList[i].keyword = EditorPrefs.GetString("Key" + i);
                 KSIData.keywordList[i].handler = KSIKeywordHandler.StrToType(EditorPrefs.GetString("Handler" + i));
+
+            }
+
+        }
+
+        for (int i = 0; i < KSIKeywordHandler.layerList.Count; i++)
+        {
+
+            if (KSIKeywordHandler.layerList[i] == null)
+            {
+
+                KSIKeywordHandler.layerList.Add(
+                    new KSIKeywordHandler.HandlerLayer(
+                        KSIKeywordHandler.StrToType(EditorPrefs.GetString("LayerType" + i)),
+                        EditorPrefs.GetInt("HandlerLayer")));
+
+            }
+            else
+            {
+                KSIKeywordHandler.layerList[i].handler = KSIKeywordHandler.StrToType(EditorPrefs.GetString("LayerType" + i));
+                KSIKeywordHandler.layerList[i].layer = EditorPrefs.GetInt("HandlerLayer");
 
             }
 
@@ -363,7 +405,11 @@ public class KSIUI : EditorWindow {
         {
 
             EditorGUILayout.BeginHorizontal();
-            KSIKeywordHandler.layerList[i].layerMask = EditorGUILayout.LayerField("Handler " + KSIKeywordHandler.layerList[i].handler + ":", KSIKeywordHandler.layerList[i].layerMask);
+            KSIKeywordHandler.layerList[i].layer = 
+                EditorGUILayout.Popup(
+                    "Handler " + KSIKeywordHandler.layerList[i].handler.ToString() + ":", 
+                    KSIKeywordHandler.layerList[i].layer, 
+                    InternalEditorUtility.layers);
             EditorGUILayout.EndHorizontal();
 
         }
